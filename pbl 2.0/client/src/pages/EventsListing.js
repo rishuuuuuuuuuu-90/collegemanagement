@@ -80,7 +80,11 @@ const EventsListing = () => {
       try {
         const intentRes = await createPaymentIntent({ eventId: event._id });
         const { paymentIntentId, amount } = intentRes.data.data;
-        setPendingPayment({ event, paymentIntentId, amount });
+        const parsedAmount = Number(amount);
+        if (!Number.isFinite(parsedAmount)) {
+          throw new Error(`Invalid payment amount from server: ${String(amount)}`);
+        }
+        setPendingPayment({ event, paymentIntentId, amount: parsedAmount });
       } catch (err) {
         setBookingMsg(
           '❌ ' + (err?.response?.data?.message || 'Unable to start payment. Please try again.')
@@ -112,7 +116,7 @@ const EventsListing = () => {
       await bookTicket({ eventId: event._id, paymentIntentId });
       await verifyPayment({ paymentIntentId, eventId: event._id });
       setPendingPayment(null);
-      setBookingMsg(`✅ Payment successful! Ticket booked for "${event.title}". Check My Tickets for your ticket QR code.`);
+      setBookingMsg(`✅ Payment successful! Ticket booked for "${event.title}". Check My Tickets for your event-entry QR code.`);
       fetchEvents();
     } catch (err) {
       setBookingMsg('❌ ' + (err?.response?.data?.message || 'Payment failed. Please try again.'));
@@ -172,8 +176,10 @@ const EventsListing = () => {
             <h3>Scan Dummy Payment QR</h3>
             <p className="payment-modal__event">{pendingPayment.event.title}</p>
             <img src={DUMMY_PAYMENT_QR} alt="Dummy payment QR" className="payment-modal__qr" />
-            <p className="payment-modal__amount">Amount: ${Number(pendingPayment.amount).toFixed(2)}</p>
-            <p className="payment-modal__hint">After scanning and paying, click "I Have Paid".</p>
+            <p className="payment-modal__amount">Amount: ${pendingPayment.amount.toFixed(2)}</p>
+            <p className="payment-modal__hint">
+              After scanning and paying, click "I Have Paid". Your event-entry QR code is available in My Tickets.
+            </p>
             <div className="payment-modal__actions">
               <button
                 className="payment-btn payment-btn--secondary"
