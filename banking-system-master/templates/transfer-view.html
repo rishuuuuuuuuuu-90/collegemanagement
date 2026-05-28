@@ -1,0 +1,40 @@
+{% extends "logged-in-basic-bootstrap-template.html" %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+  <div class="col-10 col-md-8 col-lg-6">
+    <h2 class="text-center">Secure Banking System Employee Money Transfer</h2>
+  </div>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-10 col-md-8 col-lg-6">
+    <div class="mx-auto">
+      <form action="{{ url_for('transfer') }}" method="POST">
+        <div class="form-group">
+          {% if source_account_num is none %}
+            <label for="account_number">Source Account Number</label>
+            <input type="text" class="form-control" id="account_number" name="src_account_number">
+          {% else %}
+            <label for="account_number_readonly">Source Account Number</label>
+            <input type="text" class="form-control" id="account_number_readonly" name="src_account_number"
+                   readonly value="{{ source_account_num }}">
+          {% endif %}
+
+        </div>
+        <div class="form-group">
+          <label for="rec_account_number">Recipient Account Number</label>
+          <input type="text" class="form-control" id="rec_account_number" name="rec_account_number">
+        </div>
+        <div class="form-group">
+          <label for="amount">Amount</label>
+          <input type="text" class="form-control" id="amount" name="amount">
+        </div>
+        <button type="submit" class="btn btn-primary">Transfer</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
