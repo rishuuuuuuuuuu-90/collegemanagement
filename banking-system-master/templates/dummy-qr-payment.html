@@ -1,0 +1,58 @@
+{% extends "logged-in-basic-bootstrap-template.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-10 col-md-8 col-lg-6">
+    <h2 class="text-center">Dummy QR Payment</h2>
+    <p class="text-center text-muted">Create a QR and mark payment as done when it is scanned.</p>
+  </div>
+</div>
+
+{% if msg %}
+<div class="row justify-content-center">
+  <div class="col-10 col-md-8 col-lg-6">
+    <div class="alert alert-warning">{{ msg }}</div>
+  </div>
+</div>
+{% endif %}
+
+<div class="row justify-content-center">
+  <div class="col-10 col-md-8 col-lg-6">
+    <form action="{{ url_for('create_dummy_qr_payment') }}" method="POST">
+      <div class="form-group">
+        <label for="amount">Amount</label>
+        <input type="text" class="form-control" id="amount" name="amount" placeholder="Enter amount">
+      </div>
+      <div class="form-group">
+        <label for="note">Note (optional)</label>
+        <input type="text" class="form-control" id="note" name="note" placeholder="Example: Canteen fee">
+      </div>
+      <button type="submit" class="btn btn-primary">Generate Dummy QR</button>
+    </form>
+  </div>
+</div>
+
+{% if payment %}
+<div class="row justify-content-center mt-4">
+  <div class="col-10 col-md-8 col-lg-6 text-center">
+    <h5>Payment Status: <span class="badge badge-{% if payment['status'] == 'paid' %}success{% else %}warning{% endif %}">{{ payment['status']|upper }}</span></h5>
+    <p><strong>Amount:</strong> {{ payment['amount'] }}</p>
+    {% if payment['note'] %}
+    <p><strong>Note:</strong> {{ payment['note'] }}</p>
+    {% endif %}
+    {% if payment['status'] == 'paid' and payment['paid_at'] %}
+    <p><strong>Paid at:</strong> {{ payment['paid_at'] }}</p>
+    {% endif %}
+
+    {% if qr_image_url and payment['status'] != 'paid' %}
+    <img src="{{ qr_image_url }}" alt="Dummy payment QR">
+    <p class="mt-2">
+      Scan this QR to mark payment as paid
+    </p>
+    <a class="btn btn-outline-primary btn-sm" href="{{ payment_link }}">Simulate scan on this device</a>
+    {% endif %}
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}

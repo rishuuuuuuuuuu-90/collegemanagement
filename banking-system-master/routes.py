@@ -2,12 +2,16 @@ from flask import request, render_template, redirect, url_for, session, make_res
 from flask_login import login_required, login_user, logout_user
 from datetime import datetime
 from datetime import timedelta
+from uuid import uuid4
+from urllib.parse import quote_plus
 
 from app import app, bcrypt, login_manager, db_session
 from sbs.models.tables import *
 from sbs.utils import get_latest_account_num, get_account_balance, deposit_money_db, withdraw_money_db, \
     transfer_amount_db, get_transactions_from_db, get_otp, send_sms, get_bank_codes, get_latest_emp_id, \
     PrivilegeLevels, get_privilege_levels, get_privilege_value
+
+DUMMY_QR_PAYMENTS = {}
 
 
 @app.route("/", methods=["GET"])
@@ -291,6 +295,63 @@ def transfer():
         session['transfer_amount'] = amount
         return redirect(url_for('transfer_otp_view'))
     return transfer_amount(source_account_num, rec_account_num, amount)
+
+
+@login_required
+@app.route("/dummy-qr-payment-view")
+def dummy_qr_payment_view():
+    token = request.args.get('token')
+    payment = DUMMY_QR_PAYMENTS.get(token) if token else None
+    qr_image_url = None
+    payment_link = None
+
+    if payment:
+        payment_link = url_for('dummy_qr_payment_scan', token=token, _external=True)
+        qr_image_url = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data={}".format(
+            quote_plus(payment_link)
+        )
+
+    return render_template(
+        "dummy-qr-payment.html",
+        payment=payment,
+        token=token,
+        qr_image_url=qr_image_url,
+        payment_link=payment_link,
+        msg=request.args.get('msg')
+    )
+
+
+@login_required
+@app.route("/dummy-qr-payment/create", methods=["POST"])
+def create_dummy_qr_payment():
+    amount = request.form.get('amount')
+    note = request.form.get('note')
+
+    if amount is None or str(amount).strip() == "":
+        return redirect(url_for('dummy_qr_payment_view', msg='Amount is required'))
+
+    token = uuid4().hex
+    DUMMY_QR_PAYMENTS[token] = {
+        'amount': amount,
+        'note': note,
+        'created_by': session.get('username'),
+        'status': 'pending',
+        'paid_at': None
+    }
+    return redirect(url_for('dummy_qr_payment_view', token=token))
+
+
+@app.route("/dummy-qr-payment/scan/<token>")
+def dummy_qr_payment_scan(token):
+    payment = DUMMY_QR_PAYMENTS.get(token)
+    if payment is None:
+        return "<h1>Invalid QR payment link</h1>", 404
+
+    payment['status'] = 'paid'
+    payment['paid_at'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    return make_response(
+        "<h1>QR scanned successfully</h1><p>Dummy payment marked as paid.</p>"
+    )
 
 
 

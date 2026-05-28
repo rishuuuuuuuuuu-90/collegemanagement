@@ -1,28 +1,75 @@
+:root {
+  --page-bg: #f8f9fa;
+  --text-color: #212529;
+  --card-bg: #ffffff;
+  --card-border: #dee2e6;
+  --input-bg: #ffffff;
+  --input-text: #212529;
+  --muted-text: #6c757d;
+  --toggle-top: 12px;
+}
+
 body {
-  background-color: "blue";
+  background-color: var(--page-bg);
+  color: var(--text-color);
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Extra small devices (phones, 600px and down) */
-@media only screen and (max-width: 600px) {
-
+.theme-toggle-container {
+  position: fixed;
+  top: var(--toggle-top);
+  right: 12px;
+  z-index: 1050;
 }
 
-/* Small devices (portrait tablets and large phones, 600px and up) */
-@media only screen and (min-width: 600px) {
-
+.container {
+  padding-top: 1rem;
 }
 
-/* Medium devices (landscape tablets, 768px and up) */
-@media only screen and (min-width: 768px) {
-
+.dark-mode {
+  --page-bg: #0f172a;
+  --text-color: #e2e8f0;
+  --card-bg: #1e293b;
+  --card-border: #334155;
+  --input-bg: #0f172a;
+  --input-text: #e2e8f0;
+  --muted-text: #94a3b8;
 }
 
-/* Large devices (laptops/desktops, 992px and up) */
-@media only screen and (min-width: 992px) {
-
+.dark-mode .bg-light,
+.dark-mode .navbar-light {
+  background-color: #111827 !important;
+  border-bottom: 1px solid var(--card-border);
 }
 
-/* Extra large devices (large laptops and desktops, 1200px and up) */
-@media only screen and (min-width: 1200px) {
+.dark-mode .navbar-light .navbar-brand,
+.dark-mode .navbar-light .navbar-nav .nav-link {
+  color: var(--text-color);
+}
 
+.dark-mode .form-control {
+  background-color: var(--input-bg);
+  color: var(--input-text);
+  border-color: var(--card-border);
+}
+
+.dark-mode .form-control:focus {
+  background-color: var(--input-bg);
+  color: var(--input-text);
+}
+
+.dark-mode .text-muted {
+  color: var(--muted-text) !important;
+}
+
+.dark-mode .alert-warning {
+  background-color: #7c2d12;
+  color: #ffe2cf;
+  border-color: #9a3412;
+}
+
+.dark-mode .alert-success {
+  background-color: #14532d;
+  color: #d1fae5;
+  border-color: #166534;
 }
