@@ -6,6 +6,32 @@ import { useAuth } from '../context/AuthContext';
 import EventCard from '../components/EventCard';
 import './EventListing.css';
 
+const DUMMY_PAYMENT_QR = `data:image/svg+xml;utf8,${encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" width="220" height="220" viewBox="0 0 220 220">
+    <rect width="220" height="220" fill="#ffffff"/>
+    <rect x="10" y="10" width="50" height="50" fill="#000000"/>
+    <rect x="20" y="20" width="30" height="30" fill="#ffffff"/>
+    <rect x="160" y="10" width="50" height="50" fill="#000000"/>
+    <rect x="170" y="20" width="30" height="30" fill="#ffffff"/>
+    <rect x="10" y="160" width="50" height="50" fill="#000000"/>
+    <rect x="20" y="170" width="30" height="30" fill="#ffffff"/>
+    <rect x="80" y="20" width="15" height="15" fill="#000000"/>
+    <rect x="110" y="20" width="15" height="15" fill="#000000"/>
+    <rect x="80" y="50" width="15" height="15" fill="#000000"/>
+    <rect x="95" y="80" width="15" height="15" fill="#000000"/>
+    <rect x="125" y="80" width="15" height="15" fill="#000000"/>
+    <rect x="80" y="110" width="15" height="15" fill="#000000"/>
+    <rect x="110" y="110" width="15" height="15" fill="#000000"/>
+    <rect x="140" y="110" width="15" height="15" fill="#000000"/>
+    <rect x="80" y="140" width="15" height="15" fill="#000000"/>
+    <rect x="110" y="140" width="15" height="15" fill="#000000"/>
+    <rect x="140" y="140" width="15" height="15" fill="#000000"/>
+    <rect x="170" y="95" width="15" height="15" fill="#000000"/>
+    <rect x="170" y="125" width="15" height="15" fill="#000000"/>
+    <rect x="170" y="155" width="15" height="15" fill="#000000"/>
+  </svg>`
+)}`;
+
 const EventsListing = () => {
   const { user } = useAuth();
   const [events, setEvents] = useState([]);
@@ -17,6 +43,7 @@ const EventsListing = () => {
   const [pagination, setPagination] = useState(null);
   const [bookingMsg, setBookingMsg] = useState('');
   const [bookingLoading, setBookingLoading] = useState(false);
+  const [pendingPayment, setPendingPayment] = useState(null);
 
   const fetchEvents = useCallback(async () => {
     setLoading(true);
@@ -47,30 +74,48 @@ const EventsListing = () => {
 
   const handleBook = async (event) => {
     if (!user) return;
+    setBookingMsg('');
+    if (event.price > 0) {
+      setBookingLoading(true);
+      try {
+        const intentRes = await createPaymentIntent({ eventId: event._id });
+        const { paymentIntentId, amount } = intentRes.data.data;
+        setPendingPayment({ event, paymentIntentId, amount });
+      } catch (err) {
+        setBookingMsg(
+          '❌ ' + (err?.response?.data?.message || 'Unable to start payment. Please try again.')
+        );
+      } finally {
+        setBookingLoading(false);
+      }
+      return;
+    }
+
+    setBookingLoading(true);
+    try {
+      await bookTicket({ eventId: event._id });
+      setBookingMsg(`🎟 Free ticket booked for "${event.title}"! Check My Tickets.`);
+      fetchEvents();
+    } catch (err) {
+      setBookingMsg('❌ ' + (err?.response?.data?.message || 'Booking failed. Please try again.'));
+    } finally {
+      setBookingLoading(false);
+    }
+  };
+
+  const handleConfirmPayment = async () => {
+    if (!pendingPayment) return;
     setBookingLoading(true);
     setBookingMsg('');
     try {
-      if (event.price > 0) {
-        // Create payment intent first
-        const intentRes = await createPaymentIntent({ eventId: event._id });
-        const { paymentIntentId } = intentRes.data.data;
-
-        // Book ticket with intent
-        await bookTicket({ eventId: event._id, paymentIntentId });
-
-        // Verify payment (in production, this would use Stripe.js to confirm card)
-        // Here we simulate completion
-        await verifyPayment({ paymentIntentId, eventId: event._id });
-        setBookingMsg(`🎟 Ticket booked for "${event.title}"! Check My Tickets for QR code.`);
-      } else {
-        await bookTicket({ eventId: event._id });
-        setBookingMsg(`🎟 Free ticket booked for "${event.title}"! Check My Tickets.`);
-      }
+      const { event, paymentIntentId } = pendingPayment;
+      await bookTicket({ eventId: event._id, paymentIntentId });
+      await verifyPayment({ paymentIntentId, eventId: event._id });
+      setPendingPayment(null);
+      setBookingMsg(`✅ Payment successful! Ticket booked for "${event.title}". Check My Tickets for your ticket QR code.`);
       fetchEvents();
     } catch (err) {
-      setBookingMsg(
-        '❌ ' + (err?.response?.data?.message || 'Booking failed. Please try again.')
-      );
+      setBookingMsg('❌ ' + (err?.response?.data?.message || 'Payment failed. Please try again.'));
     } finally {
       setBookingLoading(false);
     }
@@ -121,6 +166,34 @@ const EventsListing = () => {
         </div>
       )}
 
+      {pendingPayment && (
+        <div className="payment-modal-overlay">
+          <div className="payment-modal">
+            <h3>Scan Dummy Payment QR</h3>
+            <p className="payment-modal__event">{pendingPayment.event.title}</p>
+            <img src={DUMMY_PAYMENT_QR} alt="Dummy payment QR" className="payment-modal__qr" />
+            <p className="payment-modal__amount">Amount: ${Number(pendingPayment.amount).toFixed(2)}</p>
+            <p className="payment-modal__hint">After scanning and paying, click "I Have Paid".</p>
+            <div className="payment-modal__actions">
+              <button
+                className="payment-btn payment-btn--secondary"
+                onClick={() => setPendingPayment(null)}
+                disabled={bookingLoading}
+              >
+                Cancel
+              </button>
+              <button
+                className="payment-btn payment-btn--primary"
+                onClick={handleConfirmPayment}
+                disabled={bookingLoading}
+              >
+                {bookingLoading ? 'Confirming...' : 'I Have Paid'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {loading && <div className="loading-spinner">Loading events...</div>}
       {error && <div className="error-msg">{error}</div>}
 
@@ -133,7 +206,7 @@ const EventsListing = () => {
           <EventCard
             key={event._id}
             event={event}
-            onBook={bookingLoading ? null : handleBook}
+            onBook={bookingLoading || pendingPayment ? null : handleBook}
           />
         ))}
       </div>
