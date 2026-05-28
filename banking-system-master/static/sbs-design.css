@@ -6,7 +6,7 @@
   --input-bg: #ffffff;
   --input-text: #212529;
   --muted-text: #6c757d;
-  --toggle-top: 12px;
+  --theme-toggle-top: 12px;
 }
 
 body {
@@ -17,7 +17,7 @@ body {
 
 .theme-toggle-container {
   position: fixed;
-  top: var(--toggle-top);
+  top: var(--theme-toggle-top);
   right: 12px;
   z-index: 1050;
 }

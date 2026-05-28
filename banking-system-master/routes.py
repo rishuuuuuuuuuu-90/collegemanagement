@@ -11,6 +11,7 @@ from sbs.utils import get_latest_account_num, get_account_balance, deposit_money
     transfer_amount_db, get_transactions_from_db, get_otp, send_sms, get_bank_codes, get_latest_emp_id, \
     PrivilegeLevels, get_privilege_levels, get_privilege_value
 
+# Dummy in-memory payment storage for QR demo flow (resets on app restart).
 DUMMY_QR_PAYMENTS = {}
 
 
@@ -285,7 +286,7 @@ def transfer():
     rec_account_num = request.form.get('rec_account_number')
     amount = float(request.form.get('amount'))
     if amount > 1000:
-        print('Amount greater than 10000')
+        print('Amount greater than 1000')
         otp = get_otp()
         send_sms(session['phone'], otp)
         session['transfer_otp'] = otp
