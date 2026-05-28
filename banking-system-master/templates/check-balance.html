@@ -1,0 +1,25 @@
+{% extends "logged-in-basic-bootstrap-template.html" %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+  <div class="col-10 col-md-8 col-lg-6">
+    <h2 class="text-center">Secure Banking System Employee Check Balance</h2>
+  </div>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-10 col-md-8 col-lg-6">
+    <div class="mx-auto">
+      <form action="{{ url_for('get_account_balance_route') }}" method="GET">
+        <div class="form-group">
+          <label for="account_number">Account Number</label>
+          <input type="text" class="form-control" id="account_number" name="account_number">
+        </div>
+        <button type="submit" class="btn btn-primary">Get Balance</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

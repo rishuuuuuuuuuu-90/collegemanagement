@@ -1,0 +1,17 @@
+table {
+  padding: 50px;
+  width: 100%;
+  text-align: center;
+  border-width: thin;
+}
+
+thead {
+  font-family: Times New Roman;
+  font-weight: bold;
+  background-color: #ccffe6;
+}
+
+.clH3 {
+  background-color: #ccd9ff;
+  width: 70%;
+}
