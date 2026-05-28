@@ -342,6 +342,7 @@ def create_dummy_qr_payment():
     return redirect(url_for('dummy_qr_payment_view', token=token))
 
 
+@login_required
 @app.route("/dummy-qr-payment/scan/<token>")
 def dummy_qr_payment_scan(token):
     payment = DUMMY_QR_PAYMENTS.get(token)
