@@ -1,0 +1,40 @@
+﻿{% extends "logged-in-basic-bootstrap-template.html" %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+  <div class="col-10 col-md-8 col-lg-6">
+    <h2 class="text-center">Secure Banking System Statement</h2>
+  </div>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-10 col-md-9">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Transaction Id</th>
+          <th scope="col">Time</th>
+          <th scope="col">Type</th>
+          <th scope="col">Description</th>
+          <th scope="col">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for txn in transactions %}
+          <tr>
+            <th scope="row"> {{ loop.index }} </th>
+            <td>{{ txn.transaction_id }} </td>
+            <td>{{ txn.transaction_time }} </td>
+            <td>{{ txn.transaction_type }} </td>
+            <td>{{ txn.details }} </td>
+            <td>{{ txn.amount }} </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

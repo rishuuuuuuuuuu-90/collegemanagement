@@ -1,0 +1,27 @@
+{% extends "basic-bootstrap-template.html" %}
+
+{% block content %}
+  <!-- login -->
+  <div class="row justify-content-center">
+    <div class="col-10 col-md-8 col-lg-6">
+      <h2 class="text-center">Secure Banking System</h2>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-10 col-md-8 col-lg-6">
+      <div class="mx-auto">
+        {% if msg is not none %}
+          <p style="color: red"> {{ msg }} </p>
+        {% endif %}
+        <form action="{{ url_for(function) }}" method="POST">
+          <div class="form-group">
+            <label for="otp">Enter OTP</label>
+            <input type="text" class="form-control" id="otp" name="otp">
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

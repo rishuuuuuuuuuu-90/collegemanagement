@@ -1,0 +1,169 @@
+{% extends "logged-in-basic-bootstrap-template.html" %}
+
+{% block content %}
+
+
+<div class="row justify-content-center">
+  <div class="col-10 col-md-8 col-lg-6">
+    <h2 class="text-center">Secure Banking System Registration</h2>
+  </div>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-12 col-md-9">
+    <div class="mx-auto">
+      <form action="{{ url_for('register_user') }}" method="POST">
+        <div class="form-row">
+          <div class="col-12 col-md-6">
+            <div class="form-group">
+              <label for="first_name">First Name</label>
+              <input type="text" class="form-control" id="first_name" name="first_name"
+                     readonly value="{{ data.get('first_name') }}">
+            </div>
+          </div>
+          <div class="col-12 col-md-6">
+            <div class="form-group">
+              <label for="last_name">Last Name</label>
+              <input type="text" class="form-control" id="last_name" name="last_name"
+                     readonly value="{{ data.get('last_name') }}">
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="col-12 col-md-6">
+            <div class="form-group">
+              <label for="father_name">Father Name</label>
+              <input type="text" class="form-control" id="father_name" name="father_name"
+                     readonly value="{{ data.get('father_name') }}">
+            </div>
+          </div>
+          <div class="col-12 col-md-6">
+            <div class="form-group">
+              <label for="mother_name">Mother Name</label>
+              <input type="text" class="form-control" id="mother_name" name="mother_name"
+                     readonly value="{{ data.get('mother_name') }}">
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="col-12 col-md-3">
+            <div class="form-group">
+              <label for="gender">Gender</label>
+              <select id="gender" name="gender" class="form-control" readonly>
+                {% if data['gender'] == 'male' %}
+                  <option value="male" selected>Male</option>
+                {% else %}
+                  <option value="male">Male</option>
+                {% endif %}
+                {% if data['gender'] == 'female' %}
+                  <option value="female" selected>Female</option>
+                {% else %}
+                  <option value="female">Female</option>
+                {% endif %}
+                {% if data['gender'] == 'transgender' %}
+                  <option value="transgender" selected>TransGender</option>
+                {% else %}
+                  <option value="transgender">TransGender</option>
+                {% endif %}
+              </select>
+            </div>
+          </div>
+          <div class="col-12 col-md-9">
+            <div class="form-group">
+              <label for="proof_id">Identification Proof Num</label>
+              <input type="text" class="form-control" id="proof_id" name="proof_id"
+                     readonly value="{{ data.get('proof_id') }}">
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="col-12">
+            <div class="form-group">
+              <label for="address_line1">Address Line 1:</label>
+              <input type="text" class="form-control" id="address_line1" name="address_line1"
+                     readonly value="{{ data.get('address_line1') }}">
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="col-12">
+            <div class="form-group">
+              <label for="address_line2">Address Line 2:</label>
+              <input type="text" class="form-control" id="address_line2" name="address_line2"
+                     readonly value="{{ data.get('address_line2') }}">
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="col-12 col-md-6">
+            <div class="form-group">
+              <label for="zip_code">Zip Code</label>
+              <input type="text" class="form-control" id="zip_code" name="zip_code"
+                     readonly value="{{ data.get('zip_code') }}">
+            </div>
+          </div>
+          <div class="col-12 col-md-6">
+            <div class="form-group">
+              <label for="state">State</label>
+              <input type="text" class="form-control" id="state" name="state"
+                     readonly value="{{ data.get('state') }}">
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="col-12 col-md-3">
+            <div class="form-group">
+              <label for="phone">Phone</label>
+              <input type="text" class="form-control" id="phone" name="phone"
+                     readonly value="{{ data.get('phone') }}">
+            </div>
+          </div>
+          <div class="col-12 col-md-5">
+            <div class="form-group">
+              <label for="email_id">Email Id</label>
+              <input type="text" class="form-control" id="email_id" name="email_id"
+                     readonly value="{{ data.get('email_id') }}">
+            </div>
+          </div>
+          <div class="col-12 col-md-4">
+            <div class="form-group">
+              <label for="branch_code">Branch Code</label>
+              <input type="text" class="form-control" id="branch_code" name="branch_code"
+                     readonly value="{{ data.get('branch_code') }}">
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="col-12 col-md-6">
+            <div class="form-group">
+              <label for="username">User Name</label>
+              <input type="text" class="form-control" id="username" name="username"
+                     readonly value="{{ data.get('username') }}">
+            </div>
+          </div>
+          <div class="col-12 col-md-6">
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input type="password" class="form-control" id="password" name="password"
+                     readonly value="{{ data.get('password') }}">
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="col-12">
+            <div class="form-group">
+              <label for="account_number">Account Number</label>
+              <input type="text" class="form-control" id="account_number" name="account_number"
+                     readonly value="{{ account_number }}">
+            </div>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Register</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock %}

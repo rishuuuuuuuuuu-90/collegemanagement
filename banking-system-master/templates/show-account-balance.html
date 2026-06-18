@@ -1,0 +1,37 @@
+{% extends "logged-in-basic-bootstrap-template.html" %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+  <div class="col-10 col-md-8 col-lg-6">
+    <h2 class="text-center">Secure Banking System Employee Check Balance</h2>
+  </div>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-10 col-md-8 col-lg-6">
+    <div class="mx-auto">
+      <form>
+        <div class="form-row">
+          <div class="col-12 col-md-6">
+            <div class="form-group">
+              <label for="account_number">Account Number</label>
+              <input type="text" class="form-control" id="account_number" value="{{ account_number }}"
+                     readonly>
+            </div>
+          </div>
+          <div class="col-12 col-md-6">
+            <div class="form-group">
+              <label for="balance">Balance</label>
+              <input type="text" class="form-control" id="balance" value="{{ balance }}"
+                     readonly>
+            </div>
+          </div>
+        </div>
+      </form>
+      <a class="btn btn-primary" href="{{ back }}" role="button">Back</a>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
